@@ -8,6 +8,8 @@ import ServiceRecord from "./pages/serviceRecord";
 import Payment from "./pages/payment";
 import Record from "./pages/record";
 import Reports from "./pages/reports";
+import dailyReport from"./pages/dairyReport";
+
 
 export default function App() {
   return (
