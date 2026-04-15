@@ -1,30 +1,22 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Report from "./pages/report";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
 import Car from "./pages/car";
 import Services from "./pages/services";
-import ServiceRecord from "./pages/serviceRecord";
-import Payment from "./pages/payment";
 import Record from "./pages/record";
+import Payment from "./pages/payment";
 import Reports from "./pages/reports";
-import dailyReport from"./pages/dairyReport";
-
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Navbar />
+    <Router>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/car" element={<Car />} />
         <Route path="/services" element={<Services />} />
-        <Route path="/service-record" element={<ServiceRecord />} />
-        <Route path="/payment" element={<Payment />} />
         <Route path="/record" element={<Record />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/report" element={<Report />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/reports" element={<Reports />} />   {/* ✅ FIXED */}
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
