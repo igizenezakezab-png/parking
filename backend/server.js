@@ -4,15 +4,43 @@ const db = require("./config/db");
 
 const app = express();
 
-app.use(cors());
+// ✅ MUST for deployment
+app.use(cors({
+  origin: "*"
+}));
+
 app.use(express.json());
 
-// ======================
+// ========================
+// CAR
+// ========================
+app.get("/car", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM car");
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ========================
+// SERVICES
+// ========================
+app.get("/services", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM services");
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ========================
 // SERVICE RECORDS
-// ======================
+// ========================
 app.get("/service_records", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM servicerecord");
+    const [rows] = await db.query("SELECT * FROM service_records");
     res.json(rows);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -27,20 +55,22 @@ app.post("/service_records", async (req, res) => {
       return res.status(400).json({ message: "Missing fields" });
     }
 
-    await db.query(
-      "INSERT INTO servicerecord (serviceDate, serviceCode, plateNumber) VALUES (?, ?, ?)",
-      [serviceDate, serviceCode, plateNumber]
-    );
+    const sql = `
+      INSERT INTO service_records (recordNumber, serviceDate, serviceCode, plateNumber)
+      VALUES (?, ?, ?, ?)
+    `;
 
-    res.json({ message: "Record added successfully" });
+    await db.query(sql, [recordNumber, serviceDate, serviceCode, plateNumber]);
+
+    res.json({ message: "Record added" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// ======================
-// PAYMENTS (FIX 404 ERROR)
-// ======================
+// ========================
+// PAYMENTS
+// ========================
 app.get("/payments", async (req, res) => {
   try {
     const [rows] = await db.query("SELECT * FROM payments");
@@ -58,18 +88,24 @@ app.post("/payments", async (req, res) => {
       return res.status(400).json({ message: "Missing fields" });
     }
 
-    await db.query(
-      "INSERT INTO payments (PaymentNumber, AmountPaid, PaymentDate, RecordNumber) VALUES (?, ?, ?, ?)",
-      [paymentNumber, amountPaid, paymentDate, recordNumber]
-    );
+    const sql = `
+      INSERT INTO payments (paymentNumber, amountPaid, paymentDate, recordNumber)
+      VALUES (?, ?, ?, ?)
+    `;
 
-    res.json({ message: "Payment saved successfully" });
+    await db.query(sql, [paymentNumber, amountPaid, paymentDate, recordNumber]);
+
+    res.json({ message: "Payment added" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// ======================
-app.listen(5000, () => {
-  console.log("Server running on http://localhost:5000");
+// ========================
+// PORT (IMPORTANT FOR DEPLOY)
+// ========================
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
